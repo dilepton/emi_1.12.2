@@ -1,0 +1,27 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "emi",
+		"name": "EMI",
+		"description": "Item and recipe viewer for Minecraft 1.12.2 Forge. EMI is the primary UI; JEI remains loaded as the recipe backend for mod compatibility.",
+		"version": "0.7.3",
+		"mcversion": "1.12.2",
+		"url": "https://github.com/dilepton/emi_1.12.2",
+		"updateUrl": "",
+		"authorList": [
+			"Emi",
+			"Exa",
+			"dilepton"
+		],
+		"credits": "Original EMI by Emi (MIT). 1.12.2 Forge port by dilepton, using the RetroEMI compatibility layer.",
+		"logoFile": "icon.png",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": [],
+		"dependencies": [
+			"jei"
+		],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
+}

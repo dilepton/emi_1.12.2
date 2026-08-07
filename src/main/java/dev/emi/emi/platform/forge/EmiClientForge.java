@@ -1,0 +1,138 @@
+package dev.emi.emi.platform.forge;
+
+import com.rewindmc.retroemi.EmiResourceManager;
+import com.rewindmc.retroemi.RetroEMI;
+import dev.emi.emi.EmiPort;
+import dev.emi.emi.data.EmiData;
+import dev.emi.emi.network.EmiNetwork;
+import dev.emi.emi.platform.EmiClient;
+import dev.emi.emi.registry.EmiTags;
+import dev.emi.emi.runtime.EmiDrawContext;
+import dev.emi.emi.runtime.EmiLog;
+import dev.emi.emi.runtime.EmiReloadManager;
+import dev.emi.emi.screen.EmiScreenBase;
+import dev.emi.emi.screen.EmiScreenManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import shim.net.minecraft.resource.ResourceReloader;
+
+public class EmiClientForge {
+
+	public static void clientInit() {
+//		StackBatcher.EXTRA_RENDER_LAYERS.addAll(Arrays.stream(ForgeRenderTypes.values()).map(f -> f.get()).toList());
+		EmiClient.init();
+		EmiNetwork.initClient(packet -> EmiPacketHandler.CHANNEL.sendToServer(EmiPacketHandler.wrap(packet)));
+		((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(EmiResourceManager.instance);
+	}
+
+	public static void registerAdditionalModels() {
+		Minecraft client = Minecraft.getMinecraft();
+		EmiTags.registerTagModels(client.getResourceManager(), id -> {}, "inventory");
+	}
+
+	public static void registerResourceReloaders() {
+		EmiData.init(ResourceReloader::reload);
+	}
+
+	public static void recipesReloaded() {
+		EmiReloadManager.reloadRecipes();
+	}
+
+	public static void tagsReloaded() {
+		EmiReloadManager.reloadTags();
+	}
+
+	@SubscribeEvent
+	public void renderScreenBackground(GuiScreenEvent.BackgroundDrawnEvent event) {
+		EmiDrawContext context = EmiDrawContext.instance();
+		GuiScreen screen = event.getGui();
+		if (!(screen instanceof GuiContainer)) {
+			return;
+		}
+		EmiScreenBase base = EmiScreenBase.of(screen);
+		if (base != null) {
+			Minecraft client = Minecraft.getMinecraft();
+			EmiScreenManager.drawBackground(context, event.getMouseX(), event.getMouseY(), client.getRenderPartialTicks());
+		}
+	}
+
+	@SubscribeEvent
+	public void renderScreenForeground(GuiContainerEvent.DrawForeground event) {
+		EmiDrawContext context = EmiDrawContext.instance();
+		GuiContainer screen = event.getGuiContainer();
+		EmiScreenBase base = EmiScreenBase.of(screen);
+		if (base != null) {
+			Minecraft client = Minecraft.getMinecraft();
+			context.push();
+			context.matrices().translate(-screen.getGuiLeft(), -screen.getGuiTop(), 0.0);
+			EmiPort.setPositionTexShader();
+			EmiScreenManager.drawForeground(context, event.getMouseX(), event.getMouseY(), client.getRenderPartialTicks());
+			context.pop();
+		}
+	}
+
+	@SubscribeEvent
+	public void postRenderScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
+		EmiDrawContext context = EmiDrawContext.instance();
+		GuiScreen screen = event.getGui();
+		if (!(screen instanceof GuiContainer)) {
+			return;
+		}
+		EmiScreenBase base = EmiScreenBase.of(screen);
+		if (base != null) {
+			Minecraft client = Minecraft.getMinecraft();
+			context.push();
+			EmiPort.setPositionTexShader();
+			EmiScreenManager.render(context, event.getMouseX(), event.getMouseY(), client.getRenderPartialTicks());
+			context.pop();
+		}
+	}
+
+	@SubscribeEvent
+	public void onMousePost(GuiScreenEvent.MouseInputEvent.Pre event) {
+		if (!(event.getGui() instanceof GuiContainerCreative) && !RetroEMI.hasFocusedTextReflectField(event.getGui())) {
+			event.setCanceled(RetroEMI.handleMouseInput());
+		}
+	}
+
+	@SubscribeEvent
+	public void onKeyboardPost(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+		if (!(event.getGui() instanceof GuiContainerCreative) && !RetroEMI.hasFocusedTextReflectField(event.getGui())) {
+			event.setCanceled(RetroEMI.handleKeyboardInput());
+		}
+	}
+
+	@SubscribeEvent
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.START) {
+			RetroEMI.tick();
+		}
+	}
+
+	@SubscribeEvent
+	public void onClientConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+		dev.emi.emi.jemi.JeiOverlayHider.apply();
+	}
+
+//	@SubscribeEvent
+//	public void onClientConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+//		if (!event.isLocal()) {
+//			EmiReloadManager.reload();
+//		}
+//	}
+
+	@SubscribeEvent
+	public void onClientDisconnection(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+		EmiLog.info("Disconnecting from server, EMI data cleared");
+		EmiReloadManager.clear();
+		EmiClient.onServer = false;
+	}
+}

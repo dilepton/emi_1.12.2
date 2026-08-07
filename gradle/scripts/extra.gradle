@@ -1,0 +1,5 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+base {
+    archivesName.set(propertyString('mod_artifact_name'))
+}

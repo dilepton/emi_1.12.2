@@ -1,6 +1,7 @@
-### Tweaks
-* Adjusted mixin notification logging to properly avoid printing when empty.
+## [0.7.3] - 2026-08-07
 
-### Fixes
-* Fix inconsistent crashes due to mixin order, typically on Fabric 1.19.2 or 1.20.1 #1171
-* Fixed double applications of self-mutation mixins
+* Port EMI to Minecraft 1.12.2 Forge via RetroEMI compatibility layer
+* JEI 4.x bridge (JEMI) for mod recipe import
+* Java 8 runtime fixes: replace lambdas in UI hot paths for LaunchClassLoader compatibility
+* UI: search bar on right sidebar, configurable grid size, EMI config button fix
+* Hide JEI overlay option while keeping JEI loaded for recipes

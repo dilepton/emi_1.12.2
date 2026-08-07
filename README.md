@@ -1,58 +1,39 @@
-# EMI
-EMI is a featureful and accessible item and recipe viewer for Minecraft.
+# EMI for Minecraft 1.12.2 Forge
 
-![EMI Interface](https://user-images.githubusercontent.com/14813658/224562247-1588064e-39ef-475a-9108-d7a357af6939.png)
+Порт [EMI](https://github.com/emilyploszaj/emi) на Forge 1.12.2.
 
-![Recipe Tree](https://user-images.githubusercontent.com/14813658/224562258-1a5ee67a-fd7f-489f-9eed-ae67c184ddac.png)
+EMI — основной UI для просмотра предметов и рецептов. JEI остаётся установленным как backend рецептов модов (через JEMI bridge), но его overlay можно скрыть.
 
-## Developers
-To add EMI to your project as a dependency you need to add the following to your `build.gradle`:
-```gradle
-repositories {
-	maven {
-		name = "Sleeping Town"
-		url = "https://repo.sleeping.town/"
-	}
-}
+## Зависимости (runtime)
+
+- **Forge** 1.12.2 (14.23.5+)
+- **MixinBooter** — mixin-поддержка для 1.12.2
+- **JEI** 4.x — источник рецептов сторонних модов (AE2, Mekanism, Thermal, IC2 и др.)
+
+## Сборка
+
+```bash
+# Gradle требует Java 17+ (код компилируется в Java 8 через Jabel)
+export JAVA_HOME=/path/to/jdk17
+./gradlew build -x test
 ```
 
-How EMI gets added to your dependencies varies based on modloader and setup.
-The Gradle property `emi_version` should be something like `1.0.0+1.19.4` with EMI's version and Minecraft's version.
-Here are common dependency setups for different loaders and build systems.
+Готовый jar для игры: `build/libs/emi-*-forge.jar` (не `-dev.jar` и не `-sources.jar`).
 
-```gradle
-dependencies {
-	// Fabric
-	modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-	modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+Описание мода для Forge — в `src/main/resources/mcmod.info`.
 
-	// Forge (see below block as well if you use Forge Gradle)
-	compileOnly fg.deobf("dev.emi:emi-forge:${emi_version}:api")
-	runtimeOnly fg.deobf("dev.emi:emi-forge:${emi_version}") 
+## JEI Bridge
 
-	// NeoForge
-	compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
-	runtimeOnly "dev.emi:emi-neoforge:${emi_version}" 
+- Vanilla-рецепты — нативно через `VanillaPlugin`
+- Рецепты модов — импортируются из JEI Registry через `JemiPlugin`
+- Vanilla-категории JEI пропускаются, чтобы не дублировать EMI
 
-	// Architectury
-	modCompileOnly "dev.emi:emi-xplat-intermediary:${emi_version}:api"
+## Авторы и лицензия
 
-	// MultiLoader Template/VanillaGradle
-	compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}:api"
-}
-```
+| Компонент | Автор | Лицензия |
+|-----------|-------|----------|
+| EMI (оригинал) | [Emi](https://github.com/emilyploszaj/emi) | MIT |
+| RetroEMI layer | Exa и сообщество retroEMI | MIT (наследуется от EMI) |
+| Порт 1.12.2 Forge | [dilepton](https://github.com/dilepton/emi_1.12.2) | MIT |
 
-For Forge Gradle users, you will need to enable Mixin refmaps in your client sourceset. This can be done by adding 2 lines inside of your client runs, to look like below.
-
-```gradle
-runs {
-	client {
-		// Add these two lines
-		property 'mixin.env.remapRefMap', 'true'
-		property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-		// The rest of the code that was already here
-		// ...
-	}
-}
-```
+Полный текст — в [LICENSE](LICENSE).

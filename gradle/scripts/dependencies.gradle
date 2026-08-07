@@ -1,0 +1,41 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CurseMaven'
+                url 'https://cursemaven.com'
+            }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'Modrinth'
+                url 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+    maven {
+        name = 'Spongepowered'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:26.1.0'
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    implementation 'it.unimi.dsi:fastutil:8.5.18'
+    embed 'it.unimi.dsi:fastutil:8.5.18'
+
+    compileOnly(rfg.deobf('maven.modrinth:jei:4.16.5.1022'))
+    runtimeOnly(rfg.deobf('maven.modrinth:jei:4.16.5.1022'))
+}
