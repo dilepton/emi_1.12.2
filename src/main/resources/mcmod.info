@@ -11,9 +11,10 @@
 		"authorList": [
 			"Emi",
 			"Exa",
+			"Xy_Luce",
 			"dilepton"
 		],
-		"credits": "Original EMI by Emi (MIT). 1.12.2 Forge port by dilepton, using the RetroEMI compatibility layer.",
+		"credits": "Original EMI by Emi (MIT). RetroEMI by Exa. 1.12.2 Forge layer from retroEMI Forge by Xy_Luce. This port and build by dilepton.",
 		"logoFile": "icon.png",
 		"screenshots": [],
 		"parent": "",

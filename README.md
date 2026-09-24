@@ -33,7 +33,8 @@ export JAVA_HOME=/path/to/jdk17
 | Компонент | Автор | Лицензия |
 |-----------|-------|----------|
 | EMI (оригинал) | [Emi](https://github.com/emilyploszaj/emi) | MIT |
-| RetroEMI layer | Exa и сообщество retroEMI | MIT (наследуется от EMI) |
-| Порт 1.12.2 Forge | [dilepton](https://github.com/dilepton/emi_1.12.2) | MIT |
+| RetroEMI | [Exa](https://git.sleeping.town/Rewind/retroEMI) | MIT |
+| retroEMI Forge (слой 1.12.2) | [Xy_Luce](https://github.com/ysesiq/retroEMI-Forge) | MIT |
+| Этот порт и сборка | [dilepton](https://github.com/dilepton/emi_1.12.2) | MIT |
 
 Полный текст — в [LICENSE](LICENSE).

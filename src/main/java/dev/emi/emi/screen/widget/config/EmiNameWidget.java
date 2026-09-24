@@ -54,8 +54,8 @@ public class EmiNameWidget implements Drawable {
 			"Exploding Machines: IC2",
 			"Employing Many Insects",
 			"Elp Mtrapped Inanamefactory",
-			// retroEMI-Forge names ? or memes ?
-			"Extended Mouse Interface", // mysterious full name that AI wrote for EMI
+			// retroEMI Forge names (Xy_Luce)
+			"Extended Mouse Interface",
 			"Ei Mah Iah" // “哎妈呀”
 		};
 		for (String m : memes) {
